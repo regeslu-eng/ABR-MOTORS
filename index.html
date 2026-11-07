@@ -314,18 +314,18 @@
       .modal-body h2{font-size:clamp(2.25rem,11vw,3.2rem);line-height:.98}
       .modal-price{font-size:1.55rem}
       .modal-actions{display:grid;grid-template-columns:1fr;gap:9px}
-      .smart-quote{left:12px;right:82px;bottom:calc(16px + env(safe-area-inset-bottom));width:auto;padding:9px;border-radius:19px;gap:9px;align-items:center;background:linear-gradient(135deg,rgba(18,18,21,.96),rgba(8,8,9,.94));box-shadow:0 16px 42px rgba(0,0,0,.55)}
-      .smart-quote.show,.smart-quote.from-start{transform:none}
+      .smart-quote{left:50%;right:auto;bottom:calc(14px + env(safe-area-inset-bottom));width:min(calc(100% - 24px),520px);padding:9px;border-radius:19px;gap:8px;align-items:center;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(36px,1fr);transform:translate(-50%,140%);background:linear-gradient(135deg,rgba(18,18,21,.97),rgba(8,8,9,.95));box-shadow:0 16px 42px rgba(0,0,0,.58)}
+      .smart-quote.show,.smart-quote.from-start{transform:translate(-50%,0)}
       .smart-quote-bike{min-width:0;flex:1 1 auto;gap:0}
       .smart-quote-bike img{display:none}
       .smart-quote-bike strong{max-width:100%;font-size:.82rem;line-height:1.12}
       .smart-quote-bike span:not(.smart-quote-price){display:none}
       .smart-quote-price{margin-top:4px;padding:3px 7px;font-size:.64rem!important;line-height:1.15}
-      .smart-quote-actions{gap:6px;flex:0 0 auto}
-      .smart-quote-main{min-width:132px;font-size:.78rem;line-height:1;padding:12px 13px;box-shadow:0 10px 22px rgba(240,74,47,.28)}
+      .smart-quote-actions{display:contents}
+      .smart-quote-main{grid-column:2;justify-self:center;min-width:136px;font-size:.78rem;line-height:1;padding:12px 13px;box-shadow:0 10px 22px rgba(240,74,47,.28)}
       .smart-quote-hide{display:none}
-      .smart-quote-close{width:36px;height:36px;font-size:1.08rem;flex:0 0 36px}
-      .wa-float{right:14px;bottom:calc(14px + env(safe-area-inset-bottom));width:54px;height:54px}
+      .smart-quote-close{grid-column:3;justify-self:end;width:36px;height:36px;font-size:1.08rem;flex:0 0 36px}
+      .wa-float{right:14px;bottom:calc(82px + env(safe-area-inset-bottom));width:54px;height:54px}
       .quote-head{padding:26px 58px 16px 18px}
       .quote-head h3{font-size:clamp(2rem,10vw,3rem)}
       .quote-body{padding:18px 16px 26px}
@@ -344,7 +344,7 @@
       .hero-copy{font-size:.92rem}
       .moto-card{min-height:360px}
       .modal-photo{min-height:min(50svh,360px)}
-      .smart-quote{right:74px;left:9px;padding:8px;gap:7px}
+      .smart-quote{left:50%;right:auto;width:calc(100% - 18px);padding:8px;gap:7px}
       .smart-quote-bike strong{font-size:.76rem}
       .smart-quote-main{min-width:116px;padding:11px 10px;font-size:.72rem}
       .smart-quote-close{width:34px;height:34px;flex-basis:34px}
@@ -390,7 +390,7 @@ EDITAR: REDES Y CONTACTO
 EDITAR: MOTOS
 - Busca en el JavaScript la sección "EDITAR: MOTOS".
 - Cada moto usa una fotografía principal.
-- El catálogo quedó resumido a 18 motos organizadas por disponibilidad: en sucursal, llegan en octubre y próximamente.
+- El catálogo conserva 20 motos: 16 activas organizadas entre sucursal, noviembre y próximamente, más 4 vendidas.
 =============================================================================
 -->
 <div class="noise"></div>
@@ -481,7 +481,7 @@ EDITAR: MOTOS
 
       <div class="shop-toolbar reveal">
         <label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Buscar por nombre o clave…" aria-label="Buscar moto"></label>
-        <div class="count-pill"><strong id="visibleCount">18</strong> opciones</div>
+        <div class="count-pill"><strong id="visibleCount">16</strong> opciones</div>
       </div>
       <div class="filters reveal" id="filters"></div>
       <div class="conversion-strip reveal" aria-label="Proceso rápido de cotización">
@@ -721,10 +721,10 @@ const inventory = [
     "fuel": "Gasolina",
     "start": "Eléctrico",
     "category": "En sucursal",
-    "status": "Disponible en sucursal",
-    "note": "Compra inmediata",
+    "status": "Vendida",
+    "note": "Vendida",
     "image": "7761da39-1212-5974-9d20-b581322f5b22.png",
-    "description": "En sucursal · Disponible en sucursal. Honda Shadow VLX 600cc 1996 con 600 cc y millaje por confirmar. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-001.",
+    "description": "Honda Shadow VLX 600cc modelo 1996 · Vendida. Esta motocicleta ya encontró nuevo dueño.",
     "images": [
       "assets/moto-01-principal.jpg",
       "assets/moto-01-extra-02.jpg",
@@ -845,11 +845,11 @@ const inventory = [
     "transmission": "Por confirmar",
     "fuel": "Gasolina",
     "start": "Eléctrico",
-    "category": "Llegan en octubre",
-    "status": "Posventa disponible",
-    "note": "Llega en octubre",
+    "category": "En sucursal",
+    "status": "Disponible en sucursal",
+    "note": "Compra inmediata",
     "image": "0b570ac3-0207-5e55-91d6-e5c588aaf2c0.png",
-    "description": "Llegan en octubre · Posventa disponible. Yamaha Royal Star Deluxe 2007 con Por confirmar y millaje 42,498 millas. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-006.",
+    "description": "En sucursal · Disponible en sucursal. Yamaha Royal Star Deluxe 2007 con cilindraje por confirmar y 42,498 millas. Pregunta por documentación y siguientes pasos indicando la clave ABR-006.",
     "images": [
       "assets/moto-06-principal.jpg"
     ]
@@ -864,11 +864,11 @@ const inventory = [
     "transmission": "Por confirmar",
     "fuel": "Gasolina",
     "start": "Eléctrico",
-    "category": "Llegan en octubre",
-    "status": "Posventa disponible",
-    "note": "Llega en octubre",
+    "category": "En sucursal",
+    "status": "Disponible en sucursal",
+    "note": "Compra inmediata",
     "image": "3942e396-7d3f-517f-b5bc-92ffe5de03c4.png",
-    "description": "Llegan en octubre · Posventa disponible. Yamaha VStar 650cc Classic 2006 con 650 cc y millaje 22,790 millas. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-007.",
+    "description": "En sucursal · Disponible en sucursal. Yamaha VStar 650cc Classic 2006 con 650 cc y 22,790 millas. Pregunta por documentación y siguientes pasos indicando la clave ABR-007.",
     "images": [
       "assets/moto-07-principal.jpg"
     ]
@@ -883,11 +883,11 @@ const inventory = [
     "transmission": "Por confirmar",
     "fuel": "Gasolina",
     "start": "Eléctrico",
-    "category": "Llegan en octubre",
-    "status": "Posventa disponible",
-    "note": "Llega en octubre",
+    "category": "Llegan en noviembre",
+    "status": "Llega en noviembre",
+    "note": "Ingreso en noviembre",
     "image": "fa6fd41a-b6f9-5070-b274-5cde34aa6776.png",
-    "description": "Llegan en octubre · Posventa disponible. Honda Stateline 1300cc 2010 con 1300 cc y millaje 10,850 millas. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-008.",
+    "description": "Llega en noviembre. Honda Stateline 1300cc 2010 con 1300 cc y 10,850 millas. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-008.",
     "images": [
       "assets/moto-08-principal.jpg"
     ]
@@ -902,11 +902,11 @@ const inventory = [
     "transmission": "Por confirmar",
     "fuel": "Gasolina",
     "start": "Eléctrico",
-    "category": "Llegan en octubre",
-    "status": "Posventa disponible",
-    "note": "Llega en octubre",
+    "category": "Llegan en noviembre",
+    "status": "Llega en noviembre",
+    "note": "Ingreso en noviembre",
     "image": "7ee1f773-abc2-5fdc-ae36-294e525ee087.png",
-    "description": "Llegan en octubre · Posventa disponible. Suzuki Intruder Volusia 2003 con Por confirmar y millaje 35,979 millas. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-009.",
+    "description": "Llega en noviembre. Suzuki Intruder Volusia 2003 con cilindraje por confirmar y 35,979 millas. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-009.",
     "images": [
       "assets/moto-09-principal.jpg"
     ]
@@ -921,11 +921,11 @@ const inventory = [
     "transmission": "Por confirmar",
     "fuel": "Gasolina",
     "start": "Eléctrico",
-    "category": "Llegan en octubre",
-    "status": "Posventa disponible",
-    "note": "Llega en octubre",
+    "category": "Llegan en noviembre",
+    "status": "Llega en noviembre",
+    "note": "Ingreso en noviembre",
     "image": "7b755e1c-60f5-54bd-bf4b-d3c77fc81e47.png",
-    "description": "Llegan en octubre · Posventa disponible. Kawasaki Vulcan Classic 2009 con Por confirmar y millaje 32,000 millas. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-010.",
+    "description": "Llega en noviembre. Kawasaki Vulcan Classic 2009 con cilindraje por confirmar y 32,000 millas. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-010.",
     "images": [
       "assets/moto-10-principal.jpg"
     ]
@@ -940,11 +940,11 @@ const inventory = [
     "transmission": "Por confirmar",
     "fuel": "Gasolina",
     "start": "Eléctrico",
-    "category": "Llegan en octubre",
-    "status": "Posventa disponible",
-    "note": "Llega en octubre",
+    "category": "En sucursal",
+    "status": "Disponible en sucursal",
+    "note": "Compra inmediata",
     "image": "bd61d3be-d00e-567e-ac55-571a4822ef39.png",
-    "description": "Llegan en octubre · Posventa disponible. Honda Valkyrie 1500C2W 1998 con 1500 cc y millaje 49,236 millas. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-011.",
+    "description": "En sucursal · Disponible en sucursal. Honda Valkyrie 1500C2W 1998 con 1500 cc y 49,236 millas. Pregunta por documentación y siguientes pasos indicando la clave ABR-011.",
     "images": [
       "assets/moto-11-principal.jpg"
     ]
@@ -959,11 +959,11 @@ const inventory = [
     "transmission": "Por confirmar",
     "fuel": "Gasolina",
     "start": "Eléctrico",
-    "category": "Llegan en octubre",
-    "status": "Posventa disponible",
-    "note": "Llega en octubre",
+    "category": "En sucursal",
+    "status": "Disponible en sucursal",
+    "note": "Compra inmediata",
     "image": "f2bd266a-be06-50dc-9d60-94f87508fde6.png",
-    "description": "Llegan en octubre · Posventa disponible. Kawasaki Vulcan Nomad 1600cc 2005 con 1600 cc y millaje por confirmar. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-012.",
+    "description": "En sucursal · Disponible en sucursal. Kawasaki Vulcan Nomad 1600cc 2005 con 1600 cc y millaje por confirmar. Pregunta por documentación y siguientes pasos indicando la clave ABR-012.",
     "images": [
       "assets/moto-12-principal.jpg"
     ]
@@ -979,10 +979,10 @@ const inventory = [
     "fuel": "Gasolina",
     "start": "Eléctrico",
     "category": "Llegan en octubre",
-    "status": "Apartada",
-    "note": "Llega en octubre · Apartada ‼️",
+    "status": "Vendida",
+    "note": "Vendida",
     "image": "b7159b8a-ddae-548e-a566-8de4264edbe8.png",
-    "description": "Llegan en octubre · Apartada. Harley Davidson 1200 Sportster L 2006 con 1200 cc y millaje 27,496 millas. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-013.",
+    "description": "Harley Davidson 1200 Sportster L modelo 2006 · Vendida. Esta motocicleta ya encontró nuevo dueño.",
     "images": [
       "assets/moto-13-principal.jpg"
     ]
@@ -1001,7 +1001,7 @@ const inventory = [
     "status": "Próximamente",
     "note": "Ingreso próximo",
     "image": "fbc74f8b-b085-5ad5-8057-bca2a29f372f.png",
-    "description": "Próximamente · Próximamente. Suzuki Intruder 1992 con Por confirmar y millaje 35,499 millas. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-014.",
+    "description": "Próximamente. Suzuki Intruder 1992 con cilindraje por confirmar y 35,499 millas. Pregunta por disponibilidad y siguientes pasos indicando la clave ABR-014.",
     "images": [
       "assets/moto-14-principal.jpg"
     ]
@@ -1016,11 +1016,11 @@ const inventory = [
     "transmission": "Por confirmar",
     "fuel": "Gasolina",
     "start": "Eléctrico",
-    "category": "Próximamente",
-    "status": "Próximamente",
-    "note": "Ingreso próximo",
+    "category": "En sucursal",
+    "status": "Disponible en sucursal",
+    "note": "Compra inmediata",
     "image": "c29fa943-25eb-5093-838b-ece13823d34c.png",
-    "description": "Próximamente · Próximamente. Kawasaki Vulcan 1500 Classic 2000 con 1500 cc y millaje 43,235 millas. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-015.",
+    "description": "En sucursal · Disponible en sucursal. Kawasaki Vulcan 1500 Classic 2000 con 1500 cc y 43,235 millas. Pregunta por documentación y siguientes pasos indicando la clave ABR-015.",
     "images": [
       "assets/moto-15-principal.jpg"
     ]
@@ -1039,7 +1039,7 @@ const inventory = [
     "status": "Próximamente",
     "note": "Ingreso próximo",
     "image": "e521a0aa-c291-5c34-8cf6-9bfa2be27a05.png",
-    "description": "Próximamente · Próximamente. Yamaha Virago 250 2004 con 250 cc y millaje 2,061 millas. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-016.",
+    "description": "Próximamente. Yamaha Virago 250 2004 con 250 cc y 2,061 millas. Pregunta por disponibilidad y siguientes pasos indicando la clave ABR-016.",
     "images": [
       "assets/moto-16-principal.jpg"
     ]
@@ -1054,11 +1054,11 @@ const inventory = [
     "transmission": "Por confirmar",
     "fuel": "Gasolina",
     "start": "Eléctrico",
-    "category": "Próximamente",
-    "status": "Próximamente",
-    "note": "Ingreso próximo",
+    "category": "En sucursal",
+    "status": "Disponible en sucursal",
+    "note": "Compra inmediata",
     "image": "bbb8f156-6354-5c71-a0f1-5f43e19d959d.png",
-    "description": "Próximamente · Próximamente. Kawasaki VN2000 Classic 2007 con 2000 cc y millaje 29,076 millas. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-017.",
+    "description": "En sucursal · Disponible en sucursal. Kawasaki VN2000 Classic 2007 con 2000 cc y 29,076 millas. Pregunta por documentación y siguientes pasos indicando la clave ABR-017.",
     "images": [
       "assets/moto-17-principal.jpg"
     ]
@@ -1077,7 +1077,7 @@ const inventory = [
     "status": "Próximamente",
     "note": "Ingreso próximo",
     "image": "6faa0bad-f12c-513b-8557-7962b7e34880.png",
-    "description": "Próximamente · Próximamente. Kawasaki Vulcan 900 Custom 2007 con 900 cc y millaje por confirmar. Pregunta por disponibilidad, documentación y siguientes pasos indicando la clave ABR-018.",
+    "description": "Próximamente. Kawasaki Vulcan 900 Custom 2007 con 900 cc y millaje por confirmar. Pregunta por disponibilidad y siguientes pasos indicando la clave ABR-018.",
     "images": [
       "assets/moto-18-principal.jpg"
     ]
@@ -1092,11 +1092,11 @@ const inventory = [
     "transmission": "Por confirmar",
     "fuel": "Gasolina",
     "start": "Eléctrico",
-    "category": "Llegan en octubre",
-    "status": "Disponible el 15 de octubre",
-    "note": "Puede apartarse ya",
+    "category": "En sucursal",
+    "status": "Disponible en sucursal",
+    "note": "Compra inmediata",
     "image": "moto-19-principal.jpg",
-    "description": "Llegan en octubre · Disponible el 15 de octubre. Suzuki Savage 650 año 2000 publicada en $62,000 MXN. Pregunta por disponibilidad, documentación, apartado y siguientes pasos indicando la clave ABR-019.",
+    "description": "En sucursal · Disponible en sucursal. Suzuki Savage 650 año 2000 publicada en $62,000 MXN. Pregunta por documentación y siguientes pasos indicando la clave ABR-019.",
     "images": [
       "assets/moto-19-principal.jpg"
     ]
@@ -1112,10 +1112,10 @@ const inventory = [
     "fuel": "Gasolina",
     "start": "Eléctrico",
     "category": "Llegan en octubre",
-    "status": "Disponible el 15 de octubre",
-    "note": "Puede apartarse ya",
+    "status": "Vendida",
+    "note": "Vendida",
     "image": "moto-20-principal.jpg",
-    "description": "Llegan en octubre · Disponible el 15 de octubre. Yamaha VStar Classic 2009 con 10,372 millas, publicada en $83,000 MXN. Pregunta por disponibilidad, documentación, apartado y siguientes pasos indicando la clave ABR-020.",
+    "description": "Yamaha VStar Classic modelo 2009 · Vendida. Esta motocicleta ya encontró nuevo dueño.",
     "images": [
       "assets/moto-20-principal.jpg"
     ]
@@ -1126,7 +1126,7 @@ const inventory = [
    Si se reactiva para venta, vuelve a colocar su estado anterior. */
 const isSold=m=>String(m.status||'').trim().toLocaleLowerCase('es-MX')==='vendida';
 const forSale=()=>inventory.filter(m=>!isSold(m));
-const categorySequence={'En sucursal':0,'Llegan en octubre':1,'Próximamente':2};
+const categorySequence={'En sucursal':0,'Llegan en noviembre':1,'Próximamente':2};
 inventory.sort((a,b)=>(categorySequence[a.category]??99)-(categorySequence[b.category]??99)||Number(a.code.replace(/\D/g,''))-Number(b.code.replace(/\D/g,'')));
 
 const money=value=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(value);
