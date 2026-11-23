@@ -659,6 +659,7 @@ AUTOMATIZACIÓN DE VENTA / ENTREGA
   </div>
 </div>
 
+<script src="supabase-config.js"></script>
 <script>
 /* =============================================================================
    EDITAR: DATOS GENERALES
@@ -709,7 +710,7 @@ const PDF_IMAGE_DATA = {
    exactamente los mismos nombres.
 ============================================================================= */
 const MAX_BIKES = 20;
-const inventory = [
+let inventory = [
   {
     "code": "ABR-001",
     "name": "Honda Shadow VLX 600cc",
@@ -1127,10 +1128,69 @@ const inventory = [
 const isSold=m=>String(m.status||'').trim().toLocaleLowerCase('es-MX')==='vendida';
 const forSale=()=>inventory.filter(m=>!isSold(m));
 const categorySequence={'En sucursal':0,'Llegan en noviembre':1,'Próximamente':2};
-inventory.sort((a,b)=>(categorySequence[a.category]??99)-(categorySequence[b.category]??99)||Number(a.code.replace(/\D/g,''))-Number(b.code.replace(/\D/g,'')));
+const sortInventory=()=>inventory.sort((a,b)=>(categorySequence[a.category]??99)-(categorySequence[b.category]??99)||Number(a.sortOrder??a.code.replace(/\D/g,''))-Number(b.sortOrder??b.code.replace(/\D/g,'')));
+sortInventory();
 
 const money=value=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(value);
 const priceLabel=value=>(typeof value==='number' && isFinite(value) && value>0)?money(value):'Precio por confirmar';
+
+const catalogMediaUrl=media=>{
+  if(!media)return 'assets/portada-inicio.jpg';
+  if(/^(https?:|data:|blob:)/i.test(media.url||''))return media.url;
+  if(media.url)return media.url;
+  if(media.storage_path&&window.ABR_SUPABASE)return `${window.ABR_SUPABASE.url}/storage/v1/object/public/${window.ABR_SUPABASE.bucket}/${media.storage_path}`;
+  return 'assets/portada-inicio.jpg';
+};
+
+async function loadInventoryFromSupabase(){
+  const config=window.ABR_SUPABASE;
+  if(!config)return false;
+  try{
+    const params=new URLSearchParams({
+      select:'*,categories(id,name,slug),motorcycle_media(id,media_type,url,storage_path,is_primary,sort_order)',
+      deleted_at:'is.null',
+      visible:'eq.true',
+      order:'sort_order.asc,created_at.asc'
+    });
+    const response=await fetch(`${config.url}/rest/v1/motorcycles?${params}`,{
+      headers:{apikey:config.publishableKey}
+    });
+    if(!response.ok)throw new Error(`Supabase respondió ${response.status}`);
+    const rows=await response.json();
+    if(!Array.isArray(rows)||!rows.length)return false;
+    inventory=rows.map(row=>{
+      const media=[...(row.motorcycle_media||[])].sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+      const images=media.filter(item=>item.media_type==='image').sort((a,b)=>Number(b.is_primary)-Number(a.is_primary)).map(catalogMediaUrl);
+      const video=media.find(item=>item.media_type==='video');
+      const categoryRecord=Array.isArray(row.categories)?row.categories[0]:row.categories;
+      const category=categoryRecord?.name||'Próximamente';
+      const sold=row.status==='vendida';
+      return {
+        code:row.code,
+        name:row.name,
+        year:row.year||'Por confirmar',
+        price:row.price===null?null:Number(row.price),
+        engine:row.engine||'Por confirmar',
+        mileage:row.mileage||'Por confirmar',
+        transmission:row.transmission||'Por confirmar',
+        fuel:row.fuel||'Gasolina',
+        start:row.start_type||'Eléctrico',
+        category,
+        status:sold?'Vendida':(row.availability_note||(row.status==='apartada'?'Apartada':category)),
+        note:row.availability_note||'',
+        description:row.description||`${row.name}. Consulta disponibilidad directamente con ABR Motors.`,
+        images:images.length?images:['assets/portada-inicio.jpg'],
+        video:video?catalogMediaUrl(video):null,
+        sortOrder:row.sort_order
+      };
+    });
+    sortInventory();
+    return true;
+  }catch(error){
+    console.warn('Se usó el inventario local porque Supabase no estuvo disponible.',error);
+    return false;
+  }
+}
 
 
 const grid=document.getElementById('motoGrid');
@@ -1190,8 +1250,11 @@ let activeStyle='Todas';
 let selectedMoto=null;
 let selectedDelivery='';
 
-const filterOptions=['Todas',...new Set(forSale().map(m=>m.category))];
-filters.innerHTML=filterOptions.map((item,i)=>`<button class="filter ${i===0?'active':''}" data-filter="${item}">${item}</button>`).join('');
+function refreshFilterOptions(){
+  const filterOptions=['Todas',...new Set(forSale().map(m=>m.category))];
+  if(!filterOptions.includes(activeStyle))activeStyle='Todas';
+  filters.innerHTML=filterOptions.map(item=>`<button class="filter ${item===activeStyle?'active':''}" data-filter="${item}">${item}</button>`).join('');
+}
 
 function getFiltered(){
   const q=searchInput.value.trim().toLowerCase();
@@ -1855,9 +1918,14 @@ function initCheapestFloatingQuote(){
     smartQuote.classList.add('show','from-start');
   }
 }
-render();
-renderSold();
-initCheapestFloatingQuote();
+async function initializeCatalog(){
+  await loadInventoryFromSupabase();
+  refreshFilterOptions();
+  render();
+  renderSold();
+  initCheapestFloatingQuote();
+}
+initializeCatalog();
 </script>
 </body>
 </html>

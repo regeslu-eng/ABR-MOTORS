@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080808">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Administración | ABR Motors</title>
+  <link rel="icon" type="image/png" href="assets/logo-abr-motors.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <main class="login-shell" id="loginView">
+    <section class="login-panel">
+      <img class="login-logo" src="assets/logo-abr-motors.png" alt="ABR Motors">
+      <p class="eyebrow">Panel privado</p>
+      <h1>Administración del catálogo</h1>
+      <p class="login-copy">Actualiza motos, precios, disponibilidad, orden y archivos desde un solo lugar.</p>
+      <form id="loginForm" class="login-form">
+        <label>Correo electrónico
+          <input id="loginEmail" type="email" autocomplete="username" required>
+        </label>
+        <label>Contraseña
+          <span class="password-field">
+            <input id="loginPassword" type="password" autocomplete="current-password" required>
+            <button id="togglePassword" type="button" aria-label="Mostrar contraseña"><i data-lucide="eye"></i></button>
+          </span>
+        </label>
+        <p class="form-message" id="loginMessage" role="alert"></p>
+        <button class="primary full" type="submit" id="loginButton">Ingresar</button>
+      </form>
+      <a class="back-link" href="index.html">Volver al catálogo</a>
+    </section>
+  </main>
+
+  <div class="app-shell" id="appView" hidden>
+    <aside class="sidebar">
+      <div class="brand"><img src="assets/logo-abr-motors.png" alt=""><span>ABR MOTORS</span></div>
+      <nav>
+        <button class="nav-item active" type="button"><i data-lucide="bike"></i><span>Inventario</span></button>
+        <a class="nav-item" href="index.html" target="_blank" rel="noopener"><i data-lucide="external-link"></i><span>Ver catálogo</span></a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="admin-user"><span class="avatar" id="adminInitial">A</span><div><b id="adminName">Administrador</b><small id="adminEmail"></small></div></div>
+        <button class="nav-item danger" id="logoutButton" type="button"><i data-lucide="log-out"></i><span>Cerrar sesión</span></button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <div><p class="eyebrow">Control de inventario</p><h1>Catálogo de motocicletas</h1></div>
+        <button class="primary" id="newMotoButton" type="button"><i data-lucide="plus"></i>Nueva moto</button>
+      </header>
+
+      <section class="stats" aria-label="Resumen del catálogo">
+        <article><span>Total</span><strong id="statTotal">0</strong></article>
+        <article><span>En sucursal</span><strong id="statBranch">0</strong></article>
+        <article><span>Llegan</span><strong id="statArrival">0</strong></article>
+        <article><span>Próximamente</span><strong id="statSoon">0</strong></article>
+        <article><span>Vendidas</span><strong id="statSold">0</strong></article>
+      </section>
+
+      <section class="inventory-panel">
+        <div class="toolbar">
+          <label class="search"><i data-lucide="search"></i><input id="adminSearch" type="search" placeholder="Buscar por nombre, clave o marca"></label>
+          <select id="adminFilter" aria-label="Filtrar inventario">
+            <option value="all">Todas</option>
+            <option value="branch">En sucursal</option>
+            <option value="arrival">Llegan en noviembre</option>
+            <option value="soon">Próximamente</option>
+            <option value="sold">Vendidas</option>
+            <option value="hidden">Ocultas</option>
+          </select>
+          <button class="secondary icon-button" id="refreshButton" type="button" title="Actualizar"><i data-lucide="refresh-cw"></i></button>
+        </div>
+        <div class="loading" id="inventoryLoading"><span></span>Cargando inventario...</div>
+        <div class="inventory-list" id="inventoryList"></div>
+        <div class="empty-state" id="emptyState" hidden><i data-lucide="search-x"></i><h2>Sin resultados</h2><p>No hay motocicletas que coincidan con el filtro.</p></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="moto-dialog" id="motoDialog">
+    <form id="motoForm" method="dialog">
+      <header class="dialog-header">
+        <div><p class="eyebrow" id="dialogEyebrow">Nueva unidad</p><h2 id="dialogTitle">Agregar motocicleta</h2></div>
+        <button class="icon-button secondary" id="closeDialogButton" type="button" aria-label="Cerrar"><i data-lucide="x"></i></button>
+      </header>
+      <div class="dialog-body">
+        <input type="hidden" id="motoId">
+        <section class="form-section">
+          <h3>Información principal</h3>
+          <div class="form-grid">
+            <label>Clave<input id="motoCode" required placeholder="ABR-021"></label>
+            <label class="span-2">Nombre de la moto<input id="motoName" required></label>
+            <label>Marca<input id="motoBrand" required></label>
+            <label>Modelo<input id="motoModel"></label>
+            <label>Año<input id="motoYear" placeholder="Por confirmar"></label>
+            <label>Precio MXN<input id="motoPrice" type="number" min="0" step="1" placeholder="Vacío: por confirmar"></label>
+            <label>Cilindraje<input id="motoEngine" placeholder="650 cc"></label>
+            <label>Millaje<input id="motoMileage" placeholder="Por confirmar"></label>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h3>Disponibilidad y publicación</h3>
+          <div class="form-grid">
+            <label>Categoría<select id="motoCategory"></select></label>
+            <label>Estado<select id="motoStatus"><option value="disponible">Disponible</option><option value="apartada">Apartada</option><option value="vendida">Vendida</option></select></label>
+            <label class="span-2">Texto de disponibilidad<input id="motoAvailability" placeholder="Disponible en sucursal"></label>
+            <label>Orden<input id="motoOrder" type="number" min="0" step="1"></label>
+            <label>Fecha de llegada<input id="motoArrivalDate" type="date"></label>
+            <label class="span-2">Ubicación<input id="motoLocation" placeholder="Sucursal ABR Motors"></label>
+            <label class="check"><input id="motoVisible" type="checkbox" checked><span>Visible en el catálogo</span></label>
+            <label class="check"><input id="motoFeatured" type="checkbox"><span>Unidad destacada</span></label>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h3>Características</h3>
+          <div class="form-grid">
+            <label>Transmisión<input id="motoTransmission" placeholder="Por confirmar"></label>
+            <label>Combustible<input id="motoFuel" value="Gasolina"></label>
+            <label>Arranque<input id="motoStart" value="Eléctrico"></label>
+            <label>Documentación<input id="motoDocumentation" placeholder="Separada por comas"></label>
+            <label class="span-3">Descripción<textarea id="motoDescription" rows="4"></textarea></label>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h3>Fotografías y video</h3>
+          <p class="section-help">La primera fotografía será la portada. Puedes eliminar archivos existentes o añadir nuevos.</p>
+          <div class="media-grid" id="currentMedia"></div>
+          <div class="upload-grid">
+            <label class="upload-box"><i data-lucide="images"></i><span>Agregar fotografías</span><small>JPG, PNG o WebP</small><input id="motoImages" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
+            <label class="upload-box"><i data-lucide="video"></i><span>Agregar video</span><small>MP4 o WebM</small><input id="motoVideo" type="file" accept="video/mp4,video/webm"></label>
+          </div>
+        </section>
+      </div>
+      <footer class="dialog-footer">
+        <button class="danger-button" id="deleteMotoButton" type="button" hidden><i data-lucide="trash-2"></i>Quitar moto</button>
+        <span class="save-status" id="saveStatus"></span>
+        <button class="secondary" id="cancelDialogButton" type="button">Cancelar</button>
+        <button class="primary" id="saveMotoButton" type="submit"><i data-lucide="save"></i>Guardar cambios</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
