@@ -13,6 +13,8 @@ el flujo de cotizacion y el boton movil centrado **Cotizar entrega**.
 - `ampliar_panel_abr_motors.sql`: agrega fechas e historial de movimientos.
 - `crear_editor_catalogo_ablopez.sql`: crea el rol limitado para
   `ablopez2391@gmail.com` despues de registrar su cuenta en Authentication.
+- `actualizar_categorias_meses.sql`: agrega y ordena las categorias de llegada
+  para los doce meses del ano.
 - `assets/`: fotografias, videos y logotipo actuales.
 
 ## Inventario validado
@@ -36,6 +38,13 @@ pueda estar desactualizado.
 4. Crea otro snippet llamado `Ampliar panel ABR Motors`.
 5. Pega el contenido de `ampliar_panel_abr_motors.sql` y presiona **Run**.
 6. No vuelvas a ejecutar el importador del inventario: las 20 motos ya existen.
+
+## Categorias de llegada por mes
+
+Ejecuta `actualizar_categorias_meses.sql` una sola vez en **SQL Editor**. El
+selector queda en este orden: `Sin categoria`, `En sucursal`, `Proximamente` y
+despues `Llegan en enero` hasta `Llegan en diciembre`. Este ajuste no modifica
+la categoria actual de ninguna motocicleta.
 
 ## Crear el editor de catalogo
 
