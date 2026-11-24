@@ -52,15 +52,20 @@
     <main class="main-content">
       <header class="page-header">
         <div><p class="eyebrow">Control de inventario</p><h1>Catálogo de motocicletas</h1></div>
-        <button class="primary" id="newMotoButton" type="button"><i data-lucide="plus"></i>Nueva moto</button>
+        <div class="header-actions">
+          <button class="secondary" id="categoriesButton" type="button"><i data-lucide="tags"></i>Categorías</button>
+          <button class="primary" id="newMotoButton" type="button"><i data-lucide="plus"></i>Nueva moto</button>
+        </div>
       </header>
 
       <section class="stats" aria-label="Resumen del catálogo">
         <article><span>Total</span><strong id="statTotal">0</strong></article>
         <article><span>En sucursal</span><strong id="statBranch">0</strong></article>
         <article><span>Llegan</span><strong id="statArrival">0</strong></article>
+        <article><span>Apartadas</span><strong id="statReserved">0</strong></article>
         <article><span>Próximamente</span><strong id="statSoon">0</strong></article>
         <article><span>Vendidas</span><strong id="statSold">0</strong></article>
+        <article><span>Archivadas</span><strong id="statArchived">0</strong></article>
       </section>
 
       <section class="inventory-panel">
@@ -68,11 +73,10 @@
           <label class="search"><i data-lucide="search"></i><input id="adminSearch" type="search" placeholder="Buscar por nombre, clave o marca"></label>
           <select id="adminFilter" aria-label="Filtrar inventario">
             <option value="all">Todas</option>
-            <option value="branch">En sucursal</option>
-            <option value="arrival">Llegan en noviembre</option>
-            <option value="soon">Próximamente</option>
+            <option value="reserved">Apartadas</option>
             <option value="sold">Vendidas</option>
             <option value="hidden">Ocultas</option>
+            <option value="archived">Archivadas</option>
           </select>
           <button class="secondary icon-button" id="refreshButton" type="button" title="Actualizar"><i data-lucide="refresh-cw"></i></button>
         </div>
@@ -113,6 +117,8 @@
             <label class="span-2">Texto de disponibilidad<input id="motoAvailability" placeholder="Disponible en sucursal"></label>
             <label>Orden<input id="motoOrder" type="number" min="0" step="1"></label>
             <label>Fecha de llegada<input id="motoArrivalDate" type="date"></label>
+            <label>Fecha de apartado<input id="motoReservedAt" type="date"></label>
+            <label>Fecha de venta<input id="motoSoldAt" type="date"></label>
             <label class="span-2">Ubicación<input id="motoLocation" placeholder="Sucursal ABR Motors"></label>
             <label class="check"><input id="motoVisible" type="checkbox" checked><span>Visible en el catálogo</span></label>
             <label class="check"><input id="motoFeatured" type="checkbox"><span>Unidad destacada</span></label>
@@ -132,21 +138,49 @@
 
         <section class="form-section">
           <h3>Fotografías y video</h3>
-          <p class="section-help">La primera fotografía será la portada. Puedes eliminar archivos existentes o añadir nuevos.</p>
+          <p class="section-help">Elige la portada, cambia el orden, elimina archivos existentes o añade nuevos.</p>
           <div class="media-grid" id="currentMedia"></div>
           <div class="upload-grid">
-            <label class="upload-box"><i data-lucide="images"></i><span>Agregar fotografías</span><small>JPG, PNG o WebP</small><input id="motoImages" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
-            <label class="upload-box"><i data-lucide="video"></i><span>Agregar video</span><small>MP4 o WebM</small><input id="motoVideo" type="file" accept="video/mp4,video/webm"></label>
+            <label class="upload-box"><i data-lucide="images"></i><span>Agregar fotografías</span><small>JPG, PNG o WebP; idealmente menos de 2 MB</small><input id="motoImages" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
+            <label class="upload-box"><i data-lucide="video"></i><span>Agregar video</span><small>MP4 o WebM; máximo 50 MB por archivo</small><input id="motoVideo" type="file" accept="video/mp4,video/webm"></label>
           </div>
         </section>
       </div>
       <footer class="dialog-footer">
         <button class="danger-button" id="deleteMotoButton" type="button" hidden><i data-lucide="trash-2"></i>Quitar moto</button>
+        <button class="secondary" id="restoreMotoButton" type="button" hidden><i data-lucide="archive-restore"></i>Restaurar</button>
+        <button class="secondary" id="historyButton" type="button" hidden><i data-lucide="history"></i>Historial</button>
         <span class="save-status" id="saveStatus"></span>
         <button class="secondary" id="cancelDialogButton" type="button">Cancelar</button>
         <button class="primary" id="saveMotoButton" type="submit"><i data-lucide="save"></i>Guardar cambios</button>
       </footer>
     </form>
+  </dialog>
+
+  <dialog class="utility-dialog" id="categoriesDialog">
+    <form id="categoryForm" method="dialog">
+      <header class="dialog-header">
+        <div><p class="eyebrow">Organización del catálogo</p><h2>Categorías y meses</h2></div>
+        <button class="icon-button secondary" id="closeCategoriesButton" type="button" aria-label="Cerrar"><i data-lucide="x"></i></button>
+      </header>
+      <div class="dialog-body">
+        <p class="section-help">Crea categorías como “Llegan en diciembre” y ordénalas sin modificar código.</p>
+        <div class="category-create">
+          <label>Nombre<input id="categoryName" required placeholder="Llegan en diciembre"></label>
+          <label>Orden<input id="categoryOrder" type="number" min="0" step="1" value="10"></label>
+          <button class="primary" type="submit"><i data-lucide="plus"></i>Agregar</button>
+        </div>
+        <div class="category-list" id="categoryList"></div>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="utility-dialog" id="historyDialog">
+    <header class="dialog-header">
+      <div><p class="eyebrow">Seguimiento</p><h2 id="historyTitle">Historial de la motocicleta</h2></div>
+      <button class="icon-button secondary" id="closeHistoryButton" type="button" aria-label="Cerrar"><i data-lucide="x"></i></button>
+    </header>
+    <div class="dialog-body"><div class="history-list" id="historyList"></div></div>
   </dialog>
 
   <div class="toast" id="toast" role="status"></div>

@@ -1,10 +1,14 @@
 begin;
 
--- La API pública solo puede leer el catálogo visible; RLS sigue aplicándose.
+-- Elimina concesiones automáticas demasiado amplias y deja solo lo necesario.
+revoke all privileges on public.admin_users from anon, authenticated;
+revoke all privileges on public.categories from anon, authenticated;
+revoke all privileges on public.motorcycles from anon, authenticated;
+revoke all privileges on public.motorcycle_media from anon, authenticated;
+
+-- La API pública solo puede leer el catálogo; RLS decide qué filas son visibles.
 grant usage on schema public to anon, authenticated;
-grant select on public.categories to anon, authenticated;
-grant select on public.motorcycles to anon, authenticated;
-grant select on public.motorcycle_media to anon, authenticated;
+grant select on public.categories, public.motorcycles, public.motorcycle_media to anon, authenticated;
 
 -- Los cambios requieren sesión y además pasan por las políticas de administrador.
 grant select on public.admin_users to authenticated;

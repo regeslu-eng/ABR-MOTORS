@@ -1127,8 +1127,10 @@ let inventory = [
    Si se reactiva para venta, vuelve a colocar su estado anterior. */
 const isSold=m=>String(m.status||'').trim().toLocaleLowerCase('es-MX')==='vendida';
 const forSale=()=>inventory.filter(m=>!isSold(m));
-const categorySequence={'En sucursal':0,'Llegan en noviembre':1,'Próximamente':2};
-const sortInventory=()=>inventory.sort((a,b)=>(categorySequence[a.category]??99)-(categorySequence[b.category]??99)||Number(a.sortOrder??a.code.replace(/\D/g,''))-Number(b.sortOrder??b.code.replace(/\D/g,'')));
+const legacyCategorySequence={'En sucursal':0,'Llegan en noviembre':1,'Próximamente':2};
+const categoryPosition=m=>Number.isFinite(Number(m.categoryOrder))?Number(m.categoryOrder):(legacyCategorySequence[m.category]??99);
+const sortInventory=()=>inventory.sort((a,b)=>categoryPosition(a)-categoryPosition(b)||Number(a.sortOrder??a.code.replace(/\D/g,''))-Number(b.sortOrder??b.code.replace(/\D/g,'')));
+let catalogUnavailable=false;
 sortInventory();
 
 const money=value=>new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(value);
@@ -1147,7 +1149,7 @@ async function loadInventoryFromSupabase(){
   if(!config)return false;
   try{
     const params=new URLSearchParams({
-      select:'*,categories(id,name,slug),motorcycle_media(id,media_type,url,storage_path,is_primary,sort_order)',
+      select:'*,categories(id,name,slug,display_order),motorcycle_media(id,media_type,url,storage_path,is_primary,sort_order)',
       deleted_at:'is.null',
       visible:'eq.true',
       order:'sort_order.asc,created_at.asc'
@@ -1157,7 +1159,7 @@ async function loadInventoryFromSupabase(){
     });
     if(!response.ok)throw new Error(`Supabase respondió ${response.status}`);
     const rows=await response.json();
-    if(!Array.isArray(rows)||!rows.length)return false;
+    if(!Array.isArray(rows))throw new Error('Supabase no devolvió un inventario válido');
     inventory=rows.map(row=>{
       const media=[...(row.motorcycle_media||[])].sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
       const images=media.filter(item=>item.media_type==='image').sort((a,b)=>Number(b.is_primary)-Number(a.is_primary)).map(catalogMediaUrl);
@@ -1176,6 +1178,7 @@ async function loadInventoryFromSupabase(){
         fuel:row.fuel||'Gasolina',
         start:row.start_type||'Eléctrico',
         category,
+        categoryOrder:categoryRecord?.display_order,
         status:sold?'Vendida':(row.availability_note||(row.status==='apartada'?'Apartada':category)),
         note:row.availability_note||'',
         description:row.description||`${row.name}. Consulta disponibilidad directamente con ABR Motors.`,
@@ -1184,10 +1187,13 @@ async function loadInventoryFromSupabase(){
         sortOrder:row.sort_order
       };
     });
+    catalogUnavailable=false;
     sortInventory();
     return true;
   }catch(error){
-    console.warn('Se usó el inventario local porque Supabase no estuvo disponible.',error);
+    inventory=[];
+    catalogUnavailable=true;
+    console.warn('El catálogo no pudo sincronizarse con Supabase.',error);
     return false;
   }
 }
@@ -1269,7 +1275,9 @@ function render(){
   const items=getFiltered();
   visibleCount.textContent=items.length;
   if(!items.length){
-    grid.innerHTML='<div class="empty">No encontramos una opción con esos filtros.</div>';
+    grid.innerHTML=catalogUnavailable
+      ? '<div class="empty">El catálogo está temporalmente fuera de servicio. Intenta nuevamente en unos minutos.</div>'
+      : '<div class="empty">No encontramos una opción con esos filtros.</div>';
     return;
   }
   grid.innerHTML=items.map(m=>`<article class="moto-card reveal show" data-code="${m.code}" tabindex="0" role="button" aria-label="Ver ${m.name}">
